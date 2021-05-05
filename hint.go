@@ -89,5 +89,30 @@ func (bf *BFile) writeData(key []byte, value []byte) (entry, error) {
 
 func (bf *BFile) del(key []byte) error {
 	// write into datafile
+	timeStamp := uint32(time.Now().Unix())
+	kSz := uint32(0)
+	valueSz := uint32(0)
 
+	vec := encodeEntry(timeStamp, kSz, valueSz, key, nil, bf.crc)
+
+	entrySize := HeaderSize + kSz + valueSz
+
+	valueOffset := bf.writeOffset + uint64(HeaderSize+kSz)
+
+	_, err := appendWriteFile(bf.fp, vec)
+	if err != nil {
+		panic(err)
+	}
+
+	// hint
+	hintData := encodeHint(timeStamp, kSz, valueSz, valueOffset, key)
+
+	_, err = appendWriteFile(bf.hintFp, hintData)
+	if err != nil {
+		panic(err)
+	}
+
+	bf.writeOffset += uint64(entrySize)
+
+	return nil
 }
