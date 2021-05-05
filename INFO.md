@@ -93,3 +93,9 @@ type BitCask struct {
 `bitcask`是最重要的结构体，是程序的入口，`oldFile`是只读文件的索引；`writeFile`是`Active file`的索引；`keyDirs`是`key`的索引。
 
 ### 关于Merge
+为了节省空间，`bitcask`采用`merge`的方式剔除脏数据，`merge`期间会影响到服务的访问，`merge`是一件消耗`disk io`时间，
+用户应该错开`merge`的`io`高峰期.其中`merge`的触发也有很多种（触发不一定就会执行），如：
+
+- 定时策略
+- 容量策略 
+
