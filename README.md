@@ -1,7 +1,25 @@
 # bitcask
-erlang bitcask golang implementation
+erlang bitcask golang implementation,
+Suitable for storing large amounts of small files
 
 ![](./README/BitCask.jpg)
+
+## Use
+`go get github.com/dollarkillerx/bitcask`
+
+```go
+cask, err := bitcask.New(dir, nil)  // Crc32 check is enabled by default
+	if err != nil {
+		log.Fatalln(err)
+	}
+defer cask.Close()
+
+err = cask.set([]byte("file.name"), []byte("file boyd"))
+
+r, err := cask.get([]byte("file.name"))
+
+cask.del([]byte("file.name"))
+```
 
 ## 设计模型以及特点
 - 所有 `key` 存储与内存中, 所有 `key` 都存储于磁盘中

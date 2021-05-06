@@ -13,7 +13,8 @@ func init() {
 }
 
 type KeyDirs struct {
-	entrys map[string]*entry
+	entrys  map[string]*entry
+	dirName string
 }
 
 func NewKeyDir(dirName string) *KeyDirs {
@@ -23,7 +24,8 @@ func NewKeyDir(dirName string) *KeyDirs {
 	keyDirsOnce.Do(func() {
 		if keyDirs == nil {
 			keyDirs = &KeyDirs{
-				entrys: map[string]*entry{},
+				entrys:  map[string]*entry{},
+				dirName: dirName,
 			}
 		}
 	})
@@ -46,7 +48,7 @@ func (k *KeyDirs) del(key string) {
 	delete(k.entrys, key)
 }
 
-func (k *KeyDirs) pub(key string, e *entry) {
+func (k *KeyDirs) set(key string, e *entry) {
 	keyDirsLock.Lock()
 	defer keyDirsLock.Unlock()
 
@@ -58,7 +60,7 @@ func (k *KeyDirs) setCompare(key string, e *entry) bool {
 	defer keyDirsLock.Unlock()
 
 	old, ex := k.entrys[key]
-	if !ex || e.isNewerThan1(old) {
+	if !ex || e.isNewerThan1(old) { // 如果是旧的 或者不存在 就更新
 		k.entrys[key] = e
 		return true
 	}

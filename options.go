@@ -1,11 +1,12 @@
 package bitcask
 
-import "github.com/pkg/errors"
+import "errors"
 
 // Error
 var (
-	ErrNotFound = errors.New("Not Found")
-	ErrIsNotDir = errors.New("This File is not dir")
+	ErrNotFound    = errors.New("Not Found")
+	ErrIsNotDir    = errors.New("This File is not dir")
+	ErrNotReadRoot = errors.New("Can Not Read The Bitcask Root Director")
 )
 
 const (
@@ -13,7 +14,7 @@ const (
 	defaultMaxFileSize   = 1 << 31 // 2G
 	defaultTimeoutSecs   = 10
 	defaultValueMaxSize  = 1 << 20 // 1M
-	defaultCheckSumCrc32 = false
+	defaultCheckSumCrc32 = true
 )
 
 // Options .
@@ -42,6 +43,10 @@ func NewOptions(expirySecs int, maxFileSize uint64,
 		openTimeoutSecs = defaultTimeoutSecs
 	}
 
+	if mergeSecs <= 0 {
+		mergeSecs = 30
+	}
+
 	return Options{
 		ExpirySecs:      expirySecs,
 		OpenTimeoutSecs: openTimeoutSecs,
@@ -49,5 +54,6 @@ func NewOptions(expirySecs int, maxFileSize uint64,
 		ReadWrite:       readWrite,
 		CheckSumCrc32:   defaultCheckSumCrc32,
 		ValueMaxSize:    defaultMaxFileSize,
+		MergeSecs:       mergeSecs,
 	}
 }

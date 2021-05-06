@@ -39,9 +39,9 @@ func (e *entry) isNewerThan(old *entry) bool {
 func (e *entry) isNewerThan1(old *entry) bool {
 	switch {
 	case old.timeStamp < e.timeStamp:
-		return false
-	case old.timeStamp > e.timeStamp:
 		return true
+	case old.timeStamp > e.timeStamp:
+		return false
 	}
 
 	return true
